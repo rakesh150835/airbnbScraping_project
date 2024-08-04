@@ -46,48 +46,6 @@ description = description_tag.span.text
 print(description)
 
 
-# image links
-# Find the div that contains the images
-image_div = driver.find_element(By.XPATH, "//div[contains(@class, '_19xxrjc')]")  # Adjust the selector as necessary
-
-# Get the initial height of the div
-last_height = driver.execute_script("return arguments[0].scrollHeight", image_div)
-
-while True:
-    # Scroll to the bottom of the div
-    driver.execute_script("arguments[0].scrollTop = arguments[0].scrollHeight", image_div)
-    
-    # Wait to ensure images load
-    time.sleep(2)
-    
-    # Calculate new height of the div after scrolling
-    new_height = driver.execute_script("return arguments[0].scrollHeight", image_div)
-    
-    # Break the loop if the height hasn't changed
-    if new_height == last_height:
-        break
-    
-    last_height = new_height
-
-# Wait a bit to ensure all images are loaded
-time.sleep(3)
-
-# Get the page source and parse it with BeautifulSoup
-page_source = driver.page_source
-soup = BeautifulSoup(page_source, 'html.parser')
-
-# Find the section containing the images
-image_section = soup.find('div', {'class': '_19xxrjc'})  # Adjust the selector as necessary
-
-# Extract all image links
-
-
-print(image_section)
-
-
-
-
-
-
+print(soup.find('div', {'class': 'photo-viewer-section'}))
 
 driver.quit()
