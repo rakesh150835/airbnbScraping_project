@@ -8,6 +8,9 @@ from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
 from bs4 import BeautifulSoup
 import pandas as pd
+import gobnb
+import json
+
 
 service = Service(ChromeDriverManager().install())
 options = webdriver.ChromeOptions()
@@ -77,38 +80,16 @@ class Scrapper():
             # click the "show all images" button
             driver.execute_script("arguments[0].click();", parent_button)
 
-            
             time.sleep(5)
 
             driver.execute_script("window.scrollTo(0, 0);") #Go to top of page
-            
             # scroll the page 
-            last_height = driver.execute_script("return document.body.scrollHeight")
-            while True:
-                html = driver.find_element(By.TAG_NAME, 'html')
-                html.send_keys(Keys.PAGE_DOWN)
-                html.send_keys(Keys.PAGE_DOWN) 
-                html.send_keys(Keys.PAGE_DOWN) 
-                time.sleep(5) 
-
-                new_height = driver.execute_script("return document.body.scrollHeight")
-                if new_height == last_height:
-                    break
-                last_height = new_height
-
-
-
-
-            #html = driver.find_element(By.TAG_NAME, 'html')
-            #html.send_keys(Keys.PAGE_DOWN)
+            html = driver.find_element(By.TAG_NAME, 'html')
+            html.send_keys(Keys.PAGE_DOWN)
             html.send_keys(Keys.PAGE_DOWN) 
 
             # container containig all the images
-            #containers = driver.find_elements(By.CLASS_NAME, "_cdo1mj")
-
-            page_source = driver.page_source
-            soup_for_images = BeautifulSoup(page_source, 'html.parser')
-            containers = soup_for_images.find_all('div', {'class':'_cdo1mj'})
+            containers = driver.find_elements(By.CLASS_NAME, "_cdo1mj")
             print(f"{address} (#num of images): {len(containers)}")
             imgsSrc = []
             i = 0
@@ -118,25 +99,25 @@ class Scrapper():
                     html.send_keys(Keys.PAGE_DOWN)
                     html.send_keys(Keys.PAGE_DOWN)
                     html.send_keys(Keys.PAGE_DOWN) 
-                    
-                    #time.sleep(5) 
-                    driver.implicitly_wait(5)
-
+                    time.sleep(5) 
                     i = 0
-                #image = container.find_element(By.TAG_NAME, 'img')
-                #imgsSrc.append(image.get_attribute('src'))
-                try:
-                    image = container.find('img')
-                    imgsSrc.append(image['src'])
-                    print(image['src'])    
-                except:
-                    pass
+                image = container.find_element(By.TAG_NAME, 'img')
+                imgsSrc.append(image.get_attribute('src'))
                 i += 1
-
+            
             return imgsSrc
         except:
             return 'NA'
 
+    def get_gobnb_data(self, room_url):
+        currency="USD"
+        check_in = ""
+        check_out = ""
+        data = gobnb.Get_from_room_url(room_url,currency,check_in,check_out,"")
+        jsondata = json.dumps(data)
+        f = open("details.json", "a")
+        f.write(jsondata)
+        f.close()
 
     # function to get property details
     def get_property_data(self, listings):
@@ -145,6 +126,9 @@ class Scrapper():
         """
         for listing in listings[:1]:
             property_url = 'https://www.airbnb.com' + listing
+            self.get_gobnb_data(property_url)
+            continue
+
             driver.get(property_url)
 
             time.sleep(5)
@@ -245,7 +229,7 @@ class Scrapper():
                     break
         except:
             pass
-        
+        """
         # dictionary to hold the scrapped data
         scraped_data = {
             'property_address': self.property_address, 'listing_link': self.listing_link, 'bedrooms': self.bedrooms, 
@@ -267,8 +251,8 @@ class Scrapper():
 
         # create dataframe to save data in csv file
         df = pd.DataFrame(scraped_data)
-        df.to_csv('airbnb_NewYork.csv', index=False)
-
+        df.to_csv('airbnb_data.csv', index=False)
+        """
 
 
 #--------- Main Driver Code ---------
