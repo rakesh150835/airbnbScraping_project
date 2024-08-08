@@ -9,7 +9,6 @@ from webdriver_manager.chrome import ChromeDriverManager
 from bs4 import BeautifulSoup
 import pandas as pd
 import gobnb
-import json
 
 
 service = Service(ChromeDriverManager().install())
@@ -68,70 +67,31 @@ class Scrapper():
         return next_page_link, listings
     
 
-    # function to get all images links of a particular property
-    def get_images_links(self, driver, address):
-        """
-        This function get the url links of all images of a particular property
-        """
-        try:
-            target_div = driver.find_element(By.XPATH, "//div[@class='_uhxsfg']")
-            parent_div = target_div.find_element(By.XPATH, "./parent::div")
-            parent_button = parent_div.find_element(By.XPATH, "./ancestor::button")
-            # click the "show all images" button
-            driver.execute_script("arguments[0].click();", parent_button)
-
-            time.sleep(5)
-
-            driver.execute_script("window.scrollTo(0, 0);") #Go to top of page
-            # scroll the page 
-            html = driver.find_element(By.TAG_NAME, 'html')
-            html.send_keys(Keys.PAGE_DOWN)
-            html.send_keys(Keys.PAGE_DOWN) 
-
-            # container containig all the images
-            containers = driver.find_elements(By.CLASS_NAME, "_cdo1mj")
-            print(f"{address} (#num of images): {len(containers)}")
-            imgsSrc = []
-            i = 0
-            for container in containers:
-                if i == 5:
-                    html = driver.find_element(By.TAG_NAME, 'html')
-                    html.send_keys(Keys.PAGE_DOWN)
-                    html.send_keys(Keys.PAGE_DOWN)
-                    html.send_keys(Keys.PAGE_DOWN) 
-                    time.sleep(5) 
-                    i = 0
-                image = container.find_element(By.TAG_NAME, 'img')
-                imgsSrc.append(image.get_attribute('src'))
-                i += 1
-            
-            return imgsSrc
-        except:
-            return 'NA'
-
-    def get_gobnb_data(self, room_url):
+    def get_images_data(self, room_url, address):
         currency="USD"
         check_in = ""
         check_out = ""
         data = gobnb.Get_from_room_url(room_url,currency,check_in,check_out,"")
-        jsondata = json.dumps(data)
-        f = open("details.json", "a")
-        f.write(jsondata)
-        f.close()
+        images = data['images']
+
+        image_links = []
+        print(f"num of images for {address}: {len(images)}")
+        for image in images:
+            image_links.append(image['url'])
+
+        return image_links
 
     # function to get property details
     def get_property_data(self, listings):
         """
             This function takes all the properties listed on a particular page and scrape the required data 
         """
-        for listing in listings[:1]:
+        for listing in listings:
             property_url = 'https://www.airbnb.com' + listing
-            self.get_gobnb_data(property_url)
-            continue
-
+            
             driver.get(property_url)
-
             time.sleep(5)
+            
             self.listing_link.append(property_url)
 
             page_source = driver.page_source
@@ -204,7 +164,7 @@ class Scrapper():
                 self.listing_description.append('NA')
 
             # get image links
-            self.image_links.append(self.get_images_links(driver, address))
+            self.image_links.append(self.get_images_data(property_url, address))
 
 
     # get all data of all pages
@@ -229,7 +189,7 @@ class Scrapper():
                     break
         except:
             pass
-        """
+        
         # dictionary to hold the scrapped data
         scraped_data = {
             'property_address': self.property_address, 'listing_link': self.listing_link, 'bedrooms': self.bedrooms, 
@@ -252,39 +212,12 @@ class Scrapper():
         # create dataframe to save data in csv file
         df = pd.DataFrame(scraped_data)
         df.to_csv('airbnb_data.csv', index=False)
-        """
+        
 
+#------- Driver Code -------
 
-#--------- Main Driver Code ---------
-
-def get_search_result_link():
-    """
-        This function is used to get the search result link after user enter location, checkin, checkout details.
-    """
-    
-    driver = webdriver.Chrome(service=service, options=options)  
-    # Open the Airbnb website
-    driver.get('https://www.airbnb.com')
-    # Wait for a few seconds to allow the user to manually enter the location and dates
-    time.sleep(15)  
-
-    try:
-        # Wait for the search results to load
-        time.sleep(5) 
-
-        main_url = driver.current_url
-
-    except:
-        main_url = None
-
-    finally:
-        driver.quit()
-
-    return main_url
-
-
-# get the search result link of the location
-result_link = get_search_result_link()
+city_name = 'flagstaff arizona'
+result_link = f'https://www.airbnb.com/s/{city_name}/homes?room_types%5B%5D=Entire%20home%2Fapt'
 
 if result_link:
     # new WebDriver instance to fetch the page source
