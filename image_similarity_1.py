@@ -1,13 +1,14 @@
 import torch
 # CLIP (Contrastive Language-Image Pre-Training) from the openAI 
 import open_clip
+import cv2
 # util module is used for working with embeddings
 from sentence_transformers import util
 from PIL import Image
 import requests
 from PIL import Image
 from io import BytesIO
-
+import pandas as pd
 
 
 
@@ -41,6 +42,8 @@ def generateScore(image1, image2):
     float(cos_scores[0][0])*100 converts the extracted score to a percentage.
 
     """
+
+    
     img1 = imageEncoder(image1)
     img2 = imageEncoder(image2)
 
@@ -53,4 +56,6 @@ def generateScore(image1, image2):
 url1 = 'https://photos.zillowstatic.com/fp/1ef03badd2812c19df1a33c7f38cc76e-cc_ft_384.webp'
 url2 = 'https://photos.zillowstatic.com/fp/1223ee83a76d9913677197e31ab36c7b-cc_ft_384.webp'
 
-print(generateScore(url1, url2))
+print(f"similarity Score: ", round(generateScore(url1, url2), 2))
+
+
