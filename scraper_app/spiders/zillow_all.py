@@ -8,15 +8,15 @@ class ZillowAllSpider(scrapy.Spider):
         city1 = city.lower().replace(" ", "-").replace(",", "")
         self.city = city1
         self.url = f"https://www.zillow.com/{self.city}/rent-houses/"
-        file_name = city.replace(" ", "_").replace(",", "") + "-all.csv"
-        self.custom_settings = {
-            'FEEDS': {
-                file_name: {
-                    'format': 'csv',
-                    'overwrite': True,
-                },
-            },
-        }
+        # file_name = city.replace(" ", "_").replace(",", "") + "-all.csv"
+        # self.custom_settings = {
+        #     'FEEDS': {
+        #         file_name: {
+        #             'format': 'csv',
+        #             'overwrite': True,
+        #         },
+        #     },
+        # }
 
     def start_requests(self):
         yield scrapy.Request(url=self.url,callback=self.parse)
