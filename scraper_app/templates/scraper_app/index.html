@@ -1,0 +1,214 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Index</title>
+    <link rel="stylesheet" href="{%static 'css/bootstrap.min.css'%}">
+    <link rel="stylesheet" href="{%static 'css/style.css'%}">
+</head>
+
+{% comment %} <body>
+    <section class="scraping_data_outer">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-6 col-md-8  m-auto">
+                    <form method="post" class="form_outer mb-3">
+                        {% csrf_token %}
+                        <div class="form_heading text-center mb-5">
+                            <h1 class="">Scrape Rental Data</h1>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Enter State Location</label>
+                            <input type="text" name="state" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Enter City Location</label>
+                            <input type="text" name="city" class="form-control">
+                        </div>
+                        <div class="continue_btn d-flex justify-content-center gap-3 pt-3">
+                            <button type="submit" class="btn zillow_btn">Scrape</button>
+                        </div>
+                    </form>
+                    <div class="scrape_data mt-5 d-flex flex-column gap-3">
+                        <div class="scrape_data_inner gap-2 align-items-center justify-content-between">
+                            <p class="mb-0">Zillow Scrape</p>
+                            <div id="spinner1" class="spinner-border" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <div id="checkIcon1" class="check_icon" style="display: none;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="#205A3A" class="bi bi-check2" viewBox="0 0 16 16">
+                                    <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="scrape_data_inner gap-2 align-items-center justify-content-between" style="display: none;">
+                            <p class="mb-0">Airbnb Scrape</p>
+                            <div id="spinner2" class="spinner-border" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <div id="checkIcon2" class="check_icon" style="display: none;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="#205A3A" class="bi bi-check2" viewBox="0 0 16 16">
+                                    <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="scrape_data_inner gap-2 align-items-center justify-content-between" style="display: none;">
+                            <p class="mb-0">Data Mapping</p>
+                            <div id="spinner3" class="spinner-border" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <div id="checkIcon3" class="check_icon" style="display: none;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="#205A3A" class="bi bi-check2" viewBox="0 0 16 16">
+                                    <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</body> {% endcomment %}
+<body>
+    <section class="scraping_data_outer">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-6 col-md-8  m-auto">
+                    <form id="scrapeForm" class="form_outer mb-3">
+                        {% csrf_token %}
+                        <div class="form_heading text-center mb-5">
+                            <h1 class="">Scrape Rental Data</h1>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Enter State Location</label>
+                            <input type="text" name="state" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Enter City Location</label>
+                            <input type="text" name="city" class="form-control">
+                        </div>
+                        <div class="continue_btn d-flex justify-content-center gap-3 pt-3">
+                            <button type="submit" class="btn zillow_btn">Scrape</button>
+                        </div>
+                    </form>
+                    <div class="scrape_data mt-5 d-flex flex-column gap-3">
+                        <div class="scrape_data_inner gap-2 align-items-center justify-content-between">
+                            <p class="mb-0">Zillow Scrape</p>
+                            <div id="spinner1" class="spinner-border" role="status" style="display:none;">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <div id="checkIcon1" class="check_icon" style="display: none;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="#205A3A" class="bi bi-check2" viewBox="0 0 16 16">
+                                    <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="scrape_data_inner gap-2 align-items-center justify-content-between" style="display: none;">
+                            <p class="mb-0">Airbnb Scrape</p>
+                            <div id="spinner2" class="spinner-border" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <div id="checkIcon2" class="check_icon" style="display: none;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="#205A3A" class="bi bi-check2" viewBox="0 0 16 16">
+                                    <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="scrape_data_inner gap-2 align-items-center justify-content-between" style="display: none;">
+                            <p class="mb-0">Data Mapping</p>
+                            <div id="spinner3" class="spinner-border" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <div id="checkIcon3" class="check_icon" style="display: none;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="#205A3A" class="bi bi-check2" viewBox="0 0 16 16">
+                                    <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#scrapeForm').on('submit', function (event) {
+                event.preventDefault(); // Prevent the default form submission
+                
+                // Show the Zillow spinner
+                $('#spinner1').show();
+
+                // Send the form data using AJAX
+                $.ajax({
+                    url: '{% url "scraping" %}',  // Replace with your Django view URL
+                    type: 'POST',
+                    data: $(this).serialize(),
+                    success: function (response) {
+                        console.log(response.message)
+                        // On success, hide the spinner and show the check icon
+                        $('#spinner1').hide();
+                        $('#checkIcon1').show();
+
+                        // Assuming Airbnb scrape starts after Zillow
+                        $('#spinner2').parent().show();
+                        $('#spinner2').show();
+
+                        // Simulate Airbnb scraping process (replace with actual AJAX if needed)
+                        setTimeout(function() {
+                            $('#spinner2').hide();
+                            $('#checkIcon2').show();
+                            
+                            // Data Mapping starts after Airbnb scrape
+                            $('#spinner3').parent().show();
+                            $('#spinner3').show();
+
+                            // Simulate Data Mapping process
+                            setTimeout(function() {
+                                $('#spinner3').hide();
+                                $('#checkIcon3').show();
+                            }, 200000); // Simulate time for data mapping
+                        }, 200000); // Simulate time for Airbnb scrape
+                    },
+                    error: function (xhr, status, error) {
+                        // Handle error, hide spinner if needed
+                        $('#spinner1').hide();
+                        alert('Something went wrong. Please try again.');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+
+<script src="{%static 'js/bootstrap.bundle.min.js' %}"></script>
+<script src="{%static 'js/jquery.min.js' %}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    function showCheckIcon(spinnerId, checkIconId) {
+        document.getElementById(spinnerId).style.display = 'none';
+        document.getElementById(checkIconId).style.display = 'block';
+    }
+
+    function showNextDiv(divIndex) {
+        const divs = document.querySelectorAll('.scrape_data_inner');
+        if (divIndex < divs.length) {
+            divs[divIndex].style.display = 'flex';
+            setTimeout(() => {
+                showCheckIcon(`spinner${divIndex + 1}`, `checkIcon${divIndex + 1}`);
+                showNextDiv(divIndex + 1);
+            }, 5000);
+        }
+    }
+
+    showNextDiv(0);
+});
+
+</script>
+
+</html>

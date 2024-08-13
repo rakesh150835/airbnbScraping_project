@@ -1,0 +1,102 @@
+/* font kit start here */
+@font-face {
+  font-family: 'Montserrat';
+  src: url('../fonts/Montserrat-ExtraBold.woff2') format('woff2'),
+    url('../fonts/Montserrat-ExtraBold.woff') format('woff');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Montserrat';
+  src: url('../fonts/Montserrat-Bold.woff2') format('woff2'),
+    url('../fonts/Montserrat-Bold.woff') format('woff');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Montserrat';
+  src: url('../fonts/Montserrat-Medium.woff2') format('woff2'),
+    url('../fonts/Montserrat-Medium.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Montserrat';
+  src: url('../fonts/Montserrat-SemiBold.woff2') format('woff2'),
+    url('../fonts/Montserrat-SemiBold.woff') format('woff');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Montserrat';
+  src: url('../fonts/Montserrat-Regular.woff2') format('woff2'),
+    url('../fonts/Montserrat-Regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* font kit end here */
+body {
+  padding: 0px;
+  margin: 0px;
+  position: relative;
+  font-family: "Montserrat", sans-serif;
+}
+.form-control:focus{
+  box-shadow: none;
+}
+
+.scraping_data_outer {
+  padding: 50px 0px;
+  background-image: url(../images/page-bg.png);
+  background-size: cover;
+  background-repeat: no-repeat;
+  min-height: 100vh;
+}
+
+.scraping_data_outer .form_outer, .scrape_data {
+  border-radius: 10px;
+  border: 1px solid #EDEDED;
+  background: #FFF;
+  padding: 30px 30px;
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+}
+.form_outer h1 {
+  color: #000;
+  font-family: Montserrat;
+  font-size: 26px;
+  font-weight: 700;
+  line-height: normal;
+  text-transform: capitalize;
+}
+.scraping_data_outer form label {
+  color: #333;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 10px;
+}
+.scraping_data_outer .form_outer button {
+  border-radius: 35px;
+  border: 1px solid #205A3A;
+  background: #276141;
+  padding: 11px 39px;
+  color: #FFF;
+  font-family: 'Montserrat';
+  font-size: 16px;
+  font-weight: 500;
+  line-height: normal;
+  text-transform: capitalize;
+}
+.scraping_data_outer .form_outer button.zillow_btn{
+  background-color: #006aff;
+  border: 1px solid #006aff;
+}
