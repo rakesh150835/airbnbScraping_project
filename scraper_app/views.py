@@ -13,6 +13,10 @@ import os
 from django.conf import settings
 from . mapping import map
 from django.views.decorators.csrf import csrf_exempt
+import zipfile
+from django.conf import settings
+from io import BytesIO
+
 
 
 def delete_csv_files(directory):
@@ -116,6 +120,7 @@ def run_spiders(request):
         #         'status':False,
         #         'full_city': None
         #     })
+
 @csrf_exempt
 def airbnb(request):
     if request.method == 'POST':
@@ -131,6 +136,7 @@ def airbnb(request):
             return JsonResponse({
                     'status':False,
                 })    
+
 @csrf_exempt
 def data_mapping(request):
     if request.method == 'POST':
@@ -141,6 +147,31 @@ def data_mapping(request):
             return JsonResponse({'success': True, 'message': mapping_result})
         except:
             return JsonResponse({'success': False, 'message': 'Something Went Wrong'})
+    return render(request, 'scraper_app/index.html')
+
+def download_media_zip(request):
+    # Create a BytesIO buffer to hold the zip file in memory
+    buffer = BytesIO()
+
+    # Create a ZipFile object with the buffer as the file
+    with zipfile.ZipFile(buffer, 'w') as zip_file:
+        # Walk through the media directory
+        for root, dirs, files in os.walk(settings.MEDIA_ROOT):
+            for file_name in files:
+                # Create the full file path
+                file_path = os.path.join(root, file_name)
+
+                # Add the file to the zip file, maintaining the directory structure
+                zip_file.write(file_path, os.path.relpath(file_path, settings.MEDIA_ROOT))
+
+    # Prepare the buffer for reading by seeking to the beginning
+    buffer.seek(0)
+
+    # Create an HTTP response with the zip file
+    response = HttpResponse(buffer, content_type='application/zip')
+    response['Content-Disposition'] = 'attachment; filename=media_files.zip'
+
+    return response
 
 def scraping(request):
     # if request.method == 'POST':

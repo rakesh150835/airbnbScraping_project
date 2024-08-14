@@ -10,69 +10,6 @@
     <link rel="stylesheet" href="{%static 'css/style.css'%}">
 </head>
 
-{% comment %} <body>
-    <section class="scraping_data_outer">
-        <div class="container">
-            <div class="row">
-                <div class="col-xl-6 col-md-8  m-auto">
-                    <form method="post" class="form_outer mb-3">
-                        {% csrf_token %}
-                        <div class="form_heading text-center mb-5">
-                            <h1 class="">Scrape Rental Data</h1>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Enter State Location</label>
-                            <input type="text" name="state" class="form-control" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Enter City Location</label>
-                            <input type="text" name="city" class="form-control">
-                        </div>
-                        <div class="continue_btn d-flex justify-content-center gap-3 pt-3">
-                            <button type="submit" class="btn zillow_btn">Scrape</button>
-                        </div>
-                    </form>
-                    <div class="scrape_data mt-5 d-flex flex-column gap-3">
-                        <div class="scrape_data_inner gap-2 align-items-center justify-content-between">
-                            <p class="mb-0">Zillow Scrape</p>
-                            <div id="spinner1" class="spinner-border" role="status">
-                                <span class="visually-hidden">Loading...</span>
-                            </div>
-                            <div id="checkIcon1" class="check_icon" style="display: none;">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="#205A3A" class="bi bi-check2" viewBox="0 0 16 16">
-                                    <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0"/>
-                                </svg>
-                            </div>
-                        </div>
-                        <div class="scrape_data_inner gap-2 align-items-center justify-content-between" style="display: none;">
-                            <p class="mb-0">Airbnb Scrape</p>
-                            <div id="spinner2" class="spinner-border" role="status">
-                                <span class="visually-hidden">Loading...</span>
-                            </div>
-                            <div id="checkIcon2" class="check_icon" style="display: none;">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="#205A3A" class="bi bi-check2" viewBox="0 0 16 16">
-                                    <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0"/>
-                                </svg>
-                            </div>
-                        </div>
-                        <div class="scrape_data_inner gap-2 align-items-center justify-content-between" style="display: none;">
-                            <p class="mb-0">Data Mapping</p>
-                            <div id="spinner3" class="spinner-border" role="status">
-                                <span class="visually-hidden">Loading...</span>
-                            </div>
-                            <div id="checkIcon3" class="check_icon" style="display: none;">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="#205A3A" class="bi bi-check2" viewBox="0 0 16 16">
-                                    <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0"/>
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-</body> {% endcomment %}
 <body>
     <section class="scraping_data_outer">
         <div class="container">
@@ -96,39 +33,48 @@
                         </div>
                     </form>
                     <div class="scrape_data mt-5 d-flex flex-column gap-3">
-                        <div class="scrape_data_inner gap-2 align-items-center justify-content-between">
-                            <p class="mb-0">Zillow Scrape</p>
-                            <div id="spinner1" class="spinner-border" role="status" style="display:none;">
-                                <span class="visually-hidden">Loading...</span>
-                            </div>
-                            <div id="checkIcon1" class="check_icon" style="display: none;">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="#205A3A" class="bi bi-check2" viewBox="0 0 16 16">
-                                    <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0"/>
-                                </svg>
-                            </div>
-                        </div>
-                        <div class="scrape_data_inner gap-2 align-items-center justify-content-between" style="display: none;">
-                            <p class="mb-0">Airbnb Scrape</p>
-                            <div id="spinner2" class="spinner-border" role="status">
-                                <span class="visually-hidden">Loading...</span>
-                            </div>
-                            <div id="checkIcon2" class="check_icon" style="display: none;">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="#205A3A" class="bi bi-check2" viewBox="0 0 16 16">
-                                    <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0"/>
-                                </svg>
+                        <div class="scrape_data_inner">
+                            <div class="d-flex gap-2 align-items-center justify-content-between">
+                                <p class="mb-0">Zillow Scrape</p>
+                                <div id="spinner1" class="spinner-border" role="status" style="display:none;">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <div id="checkIcon1" class="check_icon" style="display: none;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="#205A3A" class="bi bi-check2" viewBox="0 0 16 16">
+                                        <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0"/>
+                                    </svg>
+                                </div>
                             </div>
                         </div>
-                        <div class="scrape_data_inner gap-2 align-items-center justify-content-between" style="display: none;">
-                            <p class="mb-0">Data Mapping</p>
-                            <div id="spinner3" class="spinner-border" role="status">
-                                <span class="visually-hidden">Loading...</span>
-                            </div>
-                            <div id="checkIcon3" class="check_icon" style="display: none;">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="#205A3A" class="bi bi-check2" viewBox="0 0 16 16">
-                                    <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0"/>
-                                </svg>
+                        <div class="scrape_data_inner" >
+                            <div class="d-flex gap-2 align-items-center justify-content-between">
+                                <p class="mb-0">Airbnb Scrape</p>
+                                <div id="spinner2" class="spinner-border" role="status" style="display: none;">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <div id="checkIcon2" class="check_icon" style="display: none;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="#205A3A" class="bi bi-check2" viewBox="0 0 16 16">
+                                        <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0"/>
+                                    </svg>
+                                </div>
                             </div>
                         </div>
+                        <div class="scrape_data_inner" >
+                            <div class="d-flex gap-2 align-items-center justify-content-between">
+                                <p class="mb-0">Data Mapping</p>
+                                <div id="spinner3" class="spinner-border" role="status" style="display: none;">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <div id="checkIcon3" class="check_icon" style="display: none;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="#205A3A" class="bi bi-check2" viewBox="0 0 16 16">
+                                        <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="download_btn justify-content-center mt-5 text-center" style="display: none; ">
+                        <a id="downloadButton" class="btn btn-success" style="border-radius:30px;" href="{% url "download_media_zip" %}" download>Download Data</a>
                     </div>
                 </div>
             </div>
@@ -186,6 +132,10 @@
                                     // Hide the third spinner and show the check icon
                                     $('#spinner3').hide();
                                     $('#checkIcon3').show();
+                                    if (dataMappingResponse.success) {
+                                        $('#downloadButton').attr('href', '{% url "download_media_zip" %}');
+                                        $('.download_btn').show();
+                                    }
 
                                     // You can handle the success of data mapping here
                                     // console.log('Data Mapping Successful:', dataMappingResponse);
