@@ -67,7 +67,7 @@ def map():
 
 
     mapped_data = {
-            'Zillow rental link': zill_link, 'Airbnb Listing link':        anbn_link, "Address": address, 'Zillow Rent price' : zill_rent_price, 'bedrooms': bedrooms, 
+            'Zillow rental link': zill_link, 'Airbnb Listing link': anbn_link, "Address": address, 'Zillow Rent price' : zill_rent_price, 'bedrooms': bedrooms, 
             'bathroms' : bathroms, 'Square footage': square_footage, 
         }
 

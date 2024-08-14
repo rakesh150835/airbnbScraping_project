@@ -137,53 +137,79 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script type="text/javascript">
-        $(document).ready(function () {
-            $('#scrapeForm').on('submit', function (event) {
-                event.preventDefault(); // Prevent the default form submission
-                
-                // Show the Zillow spinner
-                $('#spinner1').show();
+    $(document).ready(function () {
+        $('#scrapeForm').on('submit', function (event) {
+            event.preventDefault(); // Prevent the default form submission
 
-                // Send the form data using AJAX
-                $.ajax({
-                    url: '{% url "scraping" %}',  // Replace with your Django view URL
-                    type: 'POST',
-                    data: $(this).serialize(),
-                    success: function (response) {
-                        console.log(response.message)
-                        // On success, hide the spinner and show the check icon
-                        $('#spinner1').hide();
-                        $('#checkIcon1').show();
+            // Show the Zillow spinner
+            $('#spinner1').show();
 
-                        // Assuming Airbnb scrape starts after Zillow
-                        $('#spinner2').parent().show();
-                        $('#spinner2').show();
+            // Send the form data using AJAX for Zillow scraping
+            $.ajax({
+                url: '{% url "zillow" %}',  // Replace with your Django view URL
+                type: 'POST',
+                data: $(this).serialize(),
+                success: function (response) {
 
-                        // Simulate Airbnb scraping process (replace with actual AJAX if needed)
-                        setTimeout(function() {
+                    // Hide Zillow spinner and show the check icon
+                    $('#spinner1').hide();
+                    $('#checkIcon1').show();
+
+                    // Airbnb scraping process starts
+                    $('#spinner2').parent().show();
+                    $('#spinner2').show();
+
+                    // Perform Airbnb scrape with full_city from Zillow response
+                    $.ajax({
+                        url: '{% url "airbnb" %}',  // Replace with your Airbnb view URL
+                        type: 'POST',
+                        data: {
+                            full_city: response.full_city
+                        },
+                        success: function (airbnbResponse) {
+                            // Hide Airbnb spinner and show the check icon
                             $('#spinner2').hide();
                             $('#checkIcon2').show();
-                            
-                            // Data Mapping starts after Airbnb scrape
+
+                            // Third process (e.g., Data Mapping) starts after Airbnb scrape
                             $('#spinner3').parent().show();
                             $('#spinner3').show();
 
-                            // Simulate Data Mapping process
-                            setTimeout(function() {
-                                $('#spinner3').hide();
-                                $('#checkIcon3').show();
-                            }, 200000); // Simulate time for data mapping
-                        }, 200000); // Simulate time for Airbnb scrape
-                    },
-                    error: function (xhr, status, error) {
-                        // Handle error, hide spinner if needed
-                        $('#spinner1').hide();
-                        alert('Something went wrong. Please try again.');
-                    }
-                });
+                            // Perform the third AJAX request with full_city from Airbnb response
+                            $.ajax({
+                                url: '{% url "data_mapping" %}',  // Replace with your Data Mapping view URL
+                                type: 'POST',
+                                data: {
+                                    full_city: airbnbResponse.full_city
+                                },
+                                success: function (dataMappingResponse) {
+                                    // Hide the third spinner and show the check icon
+                                    $('#spinner3').hide();
+                                    $('#checkIcon3').show();
+
+                                    // You can handle the success of data mapping here
+                                    // console.log('Data Mapping Successful:', dataMappingResponse);
+                                },
+                                error: function (xhr, status, error) {
+                                    $('#spinner3').hide();
+                                    alert('Data Mapping failed. Please try again.');
+                                }
+                            });
+                        },
+                        error: function (xhr, status, error) {
+                            $('#spinner2').hide();
+                            alert('Airbnb scraping failed. Please try again.');
+                        }
+                    });
+                },
+                error: function (xhr, status, error) {
+                    $('#spinner1').hide();
+                    alert('Zillow scraping failed. Please try again.');
+                }
             });
         });
-    </script>
+    });
+</script>
 </body>
 
 <script src="{%static 'js/bootstrap.bundle.min.js' %}"></script>
@@ -206,7 +232,7 @@
         }
     }
 
-    showNextDiv(0);
+    // showNextDiv(0);
 });
 
 </script>
