@@ -8,8 +8,20 @@ def map():
     abnb_df = pd.read_csv(file1)
     zill_df = pd.read_csv(file2)
 
-    abnb_df['images'] = abnb_df['images'].apply(ast.literal_eval)
-    zill_df['images'] = zill_df['images'].apply(ast.literal_eval)
+    # abnb_df['images'] = abnb_df['images'].apply(ast.literal_eval)
+    # zill_df['images'] = zill_df['images'].apply(ast.literal_eval)
+
+    def safe_eval(val):
+        if pd.isna(val):
+            return val  # or return [] if you prefer to have an empty list for NaNs
+        try:
+            return ast.literal_eval(val)
+        except (ValueError, SyntaxError):
+            return val  # or return [] if you want to handle other errors by returning an empty list
+
+# Apply the safe evaluation to the 'images' columns
+    abnb_df['images'] = abnb_df['images'].apply(safe_eval)
+    zill_df['images'] = zill_df['images'].apply(safe_eval)
 
 
     zill_link = []

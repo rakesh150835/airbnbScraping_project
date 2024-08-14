@@ -145,9 +145,8 @@ def data_mapping(request):
             map()
             mapping_result = f"Data mapping completed for {full_city}"
             return JsonResponse({'success': True, 'message': mapping_result})
-        except:
+        except :
             return JsonResponse({'success': False, 'message': 'Something Went Wrong'})
-    return render(request, 'scraper_app/index.html')
 
 def download_media_zip(request):
     # Create a BytesIO buffer to hold the zip file in memory

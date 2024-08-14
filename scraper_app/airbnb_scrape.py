@@ -78,7 +78,8 @@ class Scrapper():
         image_links = []
         print(f"num of images for {address}: {len(images)}")
         for image in images:
-            image_links.append(image['url'])
+            if image.get('url', None) != None:
+                image_links.append(image.get('url'))
 
         return image_links
 

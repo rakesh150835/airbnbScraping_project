@@ -15,7 +15,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-xl-6 col-md-8  m-auto">
-                    <form id="scrapeForm" class="form_outer mb-3">
+                    <form id="scrapeForm" method="POST" form_outer mb-3">
                         {% csrf_token %}
                         <div class="form_heading text-center mb-5">
                             <h1 class="">Scrape Rental Data</h1>
@@ -73,7 +73,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="download_btn justify-content-center mt-5 text-center" style="display: none; ">
+                    <div class="download_btn justify-content-center mt-5 text-center" >
                         <a id="downloadButton" class="btn btn-success" style="border-radius:30px;" href="{% url "download_media_zip" %}" download>Download Data</a>
                     </div>
                 </div>
@@ -86,7 +86,7 @@
     $(document).ready(function () {
         $('#scrapeForm').on('submit', function (event) {
             event.preventDefault(); // Prevent the default form submission
-
+            $('#scrapeForm button[type="submit"]').prop('disabled', true);
             // Show the Zillow spinner
             $('#spinner1').show();
 
@@ -133,6 +133,10 @@
                                     $('#spinner3').hide();
                                     $('#checkIcon3').show();
                                     if (dataMappingResponse.success) {
+                                        $.ajax({
+                                            url: '{% url "download_media_zip" %}',
+                                            type:'GET'
+                                        })
                                         $('#downloadButton').attr('href', '{% url "download_media_zip" %}');
                                         $('.download_btn').show();
                                     }
