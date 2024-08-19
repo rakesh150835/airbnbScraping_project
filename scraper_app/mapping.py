@@ -3,13 +3,11 @@ import ast
 from . image_similarity import generateScore
 def map():
     file1 = 'airbnb_data.csv'
+    # file1 = 'zillow_data.csv'
     file2 = 'zillow_data.csv'
 
     abnb_df = pd.read_csv(file1)
     zill_df = pd.read_csv(file2)
-
-    # abnb_df['images'] = abnb_df['images'].apply(ast.literal_eval)
-    # zill_df['images'] = zill_df['images'].apply(ast.literal_eval)
 
     def safe_eval(val):
         if pd.isna(val):

@@ -1,4 +1,4 @@
-# Django Project Setup
+# Airbnb and Zillow Crawler Project Setup
 
 ## Prerequisites
 
@@ -58,41 +58,3 @@ Start the Django development server:
 python manage.py runserver
 ```
 
-The server will start on `http://127.0.0.1:8000/`.
-
-## 6. Access the Admin Interface
-
-You can access the Django admin interface at `http://127.0.0.1:8000/admin/` using the superuser credentials you created.
-
-## 7. Additional Commands
-
-- **To create new Django apps**:
-
-```bash
-python manage.py startapp appname
-```
-
-- **To check for project issues**:
-
-```bash
-python manage.py check
-```
-
-- **To collect static files**:
-
-```bash
-python manage.py collectstatic
-```
-
-## 8. Deactivate the Virtual Environment
-
-Once you're done working on the project, you can deactivate the virtual environment by running:
-
-```bash
-deactivate
-```
-
----
-
-That's it! Your Django project is now set up and ready for development.
-```

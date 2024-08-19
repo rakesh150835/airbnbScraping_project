@@ -46,5 +46,6 @@ def generateScore(image1, image2):
 
     cos_scores = util.pytorch_cos_sim(img1, img2)
     score = round(float(cos_scores[0][0])*100, 2)
+    print(score,"--------")
     
     return score

@@ -115,11 +115,6 @@ def run_spiders(request):
             'full_city': full_city
         })
         
-        # except:
-        #     return JsonResponse({
-        #         'status':False,
-        #         'full_city': None
-        #     })
 
 @csrf_exempt
 def airbnb(request):
