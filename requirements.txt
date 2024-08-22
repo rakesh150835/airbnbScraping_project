@@ -16,6 +16,8 @@ exceptiongroup==1.2.2
 filelock==3.15.4
 fsspec==2024.6.1
 ftfy==6.2.3
+geographiclib==2.0
+geopy==2.4.1
 gobnb==0.0.9
 h11==0.14.0
 huggingface-hub==0.24.5

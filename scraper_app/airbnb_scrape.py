@@ -37,7 +37,8 @@ class Scrapper():
         self.contact_email = []
         self.contact_phone_number = []
         self.image_links = []
-
+        self.latitude = []
+        self.longitude = []
 
     # function to get all listing properties on a particular page
     def get_property_listing(self, url):
@@ -46,7 +47,7 @@ class Scrapper():
         """
         driver.get(url)
 
-        time.sleep(5)
+        time.sleep(10)
         page_source = driver.page_source
         soup_for_listings = BeautifulSoup(page_source, 'html.parser')
 
@@ -57,7 +58,7 @@ class Scrapper():
         for listing in property_listing:
             listings.append(listing.a['href'])
 
-        time.sleep(3)
+        time.sleep(5)
         # get the next page link from pagination
         try:
             pagination_tag = soup_for_listings.find('a', {'aria-label': 'Next'}).get('href')
@@ -73,7 +74,10 @@ class Scrapper():
         check_in = ""
         check_out = ""
         data = gobnb.Get_from_room_url(room_url,currency,check_in,check_out,"")
-        images = data['images']
+        latLong = data.get('coordinates', {})
+        self.latitude.append(latLong.get('latitude'))
+        self.longitude.append(latLong.get('longitude'))
+        images = data.get('images', [])
 
         image_links = []
         print(f"num of images for {address}: {len(images)}")
@@ -107,6 +111,7 @@ class Scrapper():
                 self.property_address.append(address)
             except:
                 self.property_address.append('NA')
+                print("Error in addres")
 
 
             # number of bedrooms, bathrooms
@@ -143,7 +148,7 @@ class Scrapper():
             except:
                 self.bedrooms.append('1')
                 self.bathroms.append('1')
-                
+                print("Error in bad/bath")                
 
             # price of the property
             try:
@@ -155,6 +160,7 @@ class Scrapper():
                     self.price.append(price_text)
             except:
                 self.price.append('NA')
+                print("Error in price")
 
 
             # description of the property
@@ -164,7 +170,7 @@ class Scrapper():
                 self.listing_description.append(' '.join(description_text.split()))
             except:
                 self.listing_description.append('NA')
-
+                print("Error in description")
             # get image links
             self.image_links.append(self.get_images_data(property_url, address))
 
@@ -190,6 +196,7 @@ class Scrapper():
                 if not next_page_link:
                     break
         except:
+            print("No more pages found")
             pass
         
         # dictionary to hold the scrapped data
@@ -199,7 +206,8 @@ class Scrapper():
             'price' : self.price, 'listing_description': self.listing_description, 'contact_name' : self.contact_name, 
             'contact_email' : self.contact_email, 
             'contact_phone_number' : self.contact_phone_number,
-            'images': self.image_links 
+            'images': self.image_links,
+            'latitude': self.latitude, 'longitude': self.longitude 
             }
 
         # to add 'NA' value if data not found 
@@ -233,3 +241,5 @@ def scrape_airbnb(city_name):
         scrap_object.get_all_data(result_link)
 
         driver.quit()
+if __name__ == '__main__':
+    scrape_airbnb('scottsdale-az')

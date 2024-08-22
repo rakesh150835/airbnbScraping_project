@@ -1,6 +1,9 @@
 import pandas as pd
 import ast
 from . image_similarity import generateScore
+
+
+
 def map():
     file1 = 'airbnb_data.csv'
     # file1 = 'zillow_data.csv'
@@ -55,7 +58,6 @@ def map():
                     #print("no of images: ", no_of_img)
                     if generateScore(abnb_image, zil_image) >= 70:
                         count += 1
-                        
                         if count >= 5:
                             zill_link.append(zill_row['Listing_link'])
                             anbn_link.append(abnb_row['listing_link'])
@@ -67,7 +69,7 @@ def map():
 
                             mapped_index.add(zill_index)
                             
-                            break
+                        break
                 
                 if count >= 5 :
                     break
@@ -93,6 +95,7 @@ def map():
     # create dataframe to save data in csv file
     df = pd.DataFrame(mapped_data)
     df.to_csv('media/mapped_zill_abnb_data.csv', index=False)
+    #df.to_csv('mapped_zill_abnb_data.csv', index=False)
 
     print("airbnb_mapped_liks: ", zill_link)
     print("zill_mapped_image: ", anbn_link)

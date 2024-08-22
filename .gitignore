@@ -4,3 +4,7 @@ db.sqlite3
 __pycache__/
 migrations/
 test_files/
+.venv/
+.DS_Store
+.vscode/
+test_distance.py

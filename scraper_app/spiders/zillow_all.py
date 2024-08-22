@@ -32,6 +32,7 @@ class ZillowAllSpider(scrapy.Spider):
         for home in homes:
             #photos = [photo['url'] for photo in home.get('carouselPhotos',[])]
             photos = ','.join([f"'{photo['url']}'" for photo in home.get('carouselPhotos', [])])
+            latLong = home.get('latLong', {})
             home_data = {
                 "Property_address": home.get('address', None),
                 "Listing_link": home.get('detailUrl', None),
@@ -39,6 +40,8 @@ class ZillowAllSpider(scrapy.Spider):
                 "#bedrooms": home.get('beds', None),
                 "#bathrooms": home.get('baths', None),
                 "Square_footage": home.get('area', None),
+                "latitude": latLong.get('latitude', None),
+                "longitude": latLong.get('longitude', None),
                 "images":f"[{photos}]"
             }
             yield home_data

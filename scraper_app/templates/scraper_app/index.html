@@ -30,6 +30,7 @@
                         </div>
                         <div class="continue_btn d-flex justify-content-center gap-3 pt-3">
                             <button type="submit" class="btn zillow_btn">Scrape</button>
+                            <button id="refreshButton" class="btn zillow_btn">Refresh Page</button>
                         </div>
                     </form>
                     <div class="scrape_data mt-5 d-flex flex-column gap-3">
@@ -74,122 +75,123 @@
                         </div>
                     </div>
                     <div class="download_btn justify-content-center mt-5 text-center" style="display: none;" >
-                        <a id="downloadButton" class="btn btn-success" style="border-radius:30px;" href="{% url "download_media_zip" %}" download>Download Data</a>
+                        <a id="downloadButton" class="btn btn-success" style="border-radius:30px;" href="{% url "download_media_zip" %}" download>Download will start automatically. Click here if it doesn't.</a>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
+    </section>    
+</body>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function () {
+    function handleAjax(url, data, onSuccess, onError) {
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data: data,
+            success: function (response) {
+                onSuccess(response);
+            },
+            error: function (xhr, status, error) {
+                onError(xhr, status, error);
+            }
+        });
+    }
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script type="text/javascript">
-    $(document).ready(function () {
-        $('#scrapeForm').on('submit', function (event) {
-            event.preventDefault(); // Prevent the default form submission
-            $('#scrapeForm button[type="submit"]').prop('disabled', true);
-            // Show the Zillow spinner
-            $('#spinner1').show();
+    $('#scrapeForm').on('submit', function (event) {
+        event.preventDefault(); // Prevent the default form submission
+        $('#scrapeForm button[type="submit"]').prop('disabled', true);
+        $('#refreshButton').prop('disabled', true);
+        // Show the Zillow spinner
+        $('#spinner1').show();
 
-            // Send the form data using AJAX for Zillow scraping
-            $.ajax({
-                url: '{% url "zillow" %}',  // Replace with your Django view URL
-                type: 'POST',
-                data: $(this).serialize(),
-                success: function (response) {
+        handleAjax(
+            '{% url "zillow" %}',  // Replace with your Zillow view URL
+            $(this).serialize(),
+            function (response) {
+                // Hide Zillow spinner and show the check icon
+                $('#spinner1').hide();
+                $('#checkIcon1').show();
 
-                    // Hide Zillow spinner and show the check icon
-                    $('#spinner1').hide();
-                    $('#checkIcon1').show();
+                // Airbnb scraping process starts
+                $('#spinner2').parent().show();
+                $('#spinner2').show();
 
-                    // Airbnb scraping process starts
-                    $('#spinner2').parent().show();
-                    $('#spinner2').show();
+                handleAjax(
+                    '{% url "airbnb" %}',  // Replace with your Airbnb view URL
+                    { full_city: response.full_city },
+                    function (airbnbResponse) {
+                        $('#spinner2').hide();
+                        $('#checkIcon2').show();
 
-                    // Perform Airbnb scrape with full_city from Zillow response
-                    $.ajax({
-                        url: '{% url "airbnb" %}',  // Replace with your Airbnb view URL
-                        type: 'POST',
-                        data: {
-                            full_city: response.full_city
-                        },
-                        success: function (airbnbResponse) {
-                            // Hide Airbnb spinner and show the check icon
-                            $('#spinner2').hide();
-                            $('#checkIcon2').show();
-
-                            // Third process (e.g., Data Mapping) starts after Airbnb scrape
+                        if (airbnbResponse.status) {
+                            // Proceed with the Data Mapping step
                             $('#spinner3').parent().show();
                             $('#spinner3').show();
 
-                            // Perform the third AJAX request with full_city from Airbnb response
-                            $.ajax({
-                                url: '{% url "data_mapping" %}',  // Replace with your Data Mapping view URL
-                                type: 'POST',
-                                data: {
-                                    full_city: airbnbResponse.full_city
-                                },
-                                success: function (dataMappingResponse) {
-                                    // Hide the third spinner and show the check icon
+                            handleAjax(
+                                '{% url "data_mapping" %}',  // Replace with your Data Mapping view URL
+                                { full_city: airbnbResponse.full_city },
+                                function (dataMappingResponse) {
                                     $('#spinner3').hide();
                                     $('#checkIcon3').show();
-                                    if (dataMappingResponse.success) {
-                                        $.ajax({
-                                            url: '{% url "download_media_zip" %}',
-                                            type:'GET'
-                                        })
-                                        $('#downloadButton').attr('href', '{% url "download_media_zip" %}');
+                                    
+                                    if (dataMappingResponse.status) {
+                                        // Enable the download button
                                         $('.download_btn').show();
-                                        $('#scrapeForm button[type="submit"]').prop('disabled', false);
+                                        
+                                        // Trigger the download automatically
+                                        document.getElementById('downloadButton').click();
+                                    } else {
+                                        alert('Data Mapping failed: ' + dataMappingResponse.message);
                                     }
-
-                                    // You can handle the success of data mapping here
-                                    // console.log('Data Mapping Successful:', dataMappingResponse);
+                                    
+                                    // Re-enable the buttons after all operations
+                                    $('#scrapeForm button[type="submit"]').prop('disabled', false);
+                                    $('#refreshButton').prop('disabled', false);
                                 },
-                                error: function (xhr, status, error) {
+                                function (xhr, status, error) {
                                     $('#spinner3').hide();
                                     alert('Data Mapping failed. Please try again.');
+                                    // Re-enable buttons in case of error
+                                    $('#scrapeForm button[type="submit"]').prop('disabled', false);
+                                    $('#refreshButton').prop('disabled', false);
                                 }
-                            });
-                        },
-                        error: function (xhr, status, error) {
-                            $('#spinner2').hide();
-                            alert('Airbnb scraping failed. Please try again.');
+                            );
+                        } else {
+                            alert('Airbnb scraping failed: ' + airbnbResponse.message);
+                            // Re-enable buttons in case of failure
+                            $('#scrapeForm button[type="submit"]').prop('disabled', false);
+                            $('#refreshButton').prop('disabled', false);
                         }
-                    });
-                },
-                error: function (xhr, status, error) {
-                    $('#spinner1').hide();
-                    alert('Zillow scraping failed. Please try again.');
-                }
-            });
-        });
+                    },
+                    function (xhr, status, error) {
+                        $('#spinner2').hide();
+                        alert('Airbnb scraping failed. Please try again.');
+                        // Re-enable buttons in case of error
+                        $('#scrapeForm button[type="submit"]').prop('disabled', false);
+                        $('#refreshButton').prop('disabled', false);
+                    }
+                );
+            },
+            function (xhr, status, error) {
+                $('#spinner1').hide();
+                alert('Zillow scraping failed. Please try again.');
+                // Re-enable buttons in case of error
+                $('#scrapeForm button[type="submit"]').prop('disabled', false);
+                $('#refreshButton').prop('disabled', false);
+            }
+        );
+    });
+});
+</script>
+
+<script type="text/javascript">
+    // JavaScript to handle the button click event
+    document.getElementById("refreshButton").addEventListener("click", function() {
+        location.reload(true); // Force a reload from the server, bypassing the cache
     });
 </script>
-</body>
-
 <script src="{%static 'js/bootstrap.bundle.min.js' %}"></script>
-<script src="{%static 'js/jquery.min.js' %}"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-    function showCheckIcon(spinnerId, checkIconId) {
-        document.getElementById(spinnerId).style.display = 'none';
-        document.getElementById(checkIconId).style.display = 'block';
-    }
-
-    function showNextDiv(divIndex) {
-        const divs = document.querySelectorAll('.scrape_data_inner');
-        if (divIndex < divs.length) {
-            divs[divIndex].style.display = 'flex';
-            setTimeout(() => {
-                showCheckIcon(`spinner${divIndex + 1}`, `checkIcon${divIndex + 1}`);
-                showNextDiv(divIndex + 1);
-            }, 5000);
-        }
-    }
-
-    // showNextDiv(0);
-});
-
-</script>
-
 </html>

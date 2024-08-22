@@ -33,20 +33,10 @@ class ZillowFurnishedSpider(scrapy.Spider):
             "mapZoom": 13
         }
         self.url = self.base_url + '?searchQueryState=' + json.dumps(self.search_query_state)
-        # file_name = city.replace(" ", "_").replace(",", "") + "-furnished.csv"
-        # self.custom_settings = {
-        #     'FEEDS': {
-        #         file_name: {
-        #             'format': 'csv',
-        #             'overwrite': True,
-        #         },
-        #     },
-        # }
     def start_requests(self):
         yield scrapy.Request(url=self.url,callback=self.parse)
 
     def parse(self, response):
-        #//*[@id="grid-search-results"]/div[2]/nav/ul/li[6]/a
         next_data_script = response.xpath('//script[@id="__NEXT_DATA__"]/text()').get()
 
         data = json.loads(next_data_script)

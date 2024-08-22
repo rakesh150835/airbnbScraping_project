@@ -16,6 +16,7 @@ from django.views.decorators.csrf import csrf_exempt
 import zipfile
 from django.conf import settings
 from io import BytesIO
+import time
 
 
 
@@ -36,8 +37,8 @@ def run_spiders(request):
             full_city = state
         media_dir = os.path.join(settings.MEDIA_ROOT)
         root_dir = os.path.join(settings.BASE_DIR)
-        delete_csv_files(media_dir)
-        delete_csv_files(root_dir)
+        # delete_csv_files(media_dir)  #REMOVE THE COMMENT IN PRODUCTION
+        # delete_csv_files(root_dir) #REMOVE THE COMMENT IN PRODUCTION
         
         file_name_all = "zillow_data.csv"
         file_name_furnished = 'media/'+full_city.replace(" ", "_").replace(",", "") + "-furnished.csv"
@@ -121,27 +122,29 @@ def airbnb(request):
     if request.method == 'POST':
         # Extract data from the request
         full_city = request.POST.get('full_city')
+        city = full_city.lower().replace(" ", "-").replace(",", "")
         try:
-            
-            scrape_airbnb(full_city)
+            scrape_airbnb(city)
             return JsonResponse({
-                    'status':True,   
+                    'status':True,
+                    'message':'Airbnb scarping Completed!'   
                 })
         except:
             return JsonResponse({
                     'status':False,
+                    'message': 'Something Went Wrong In Airbnb Scraping!'
                 })    
 
 @csrf_exempt
 def data_mapping(request):
     if request.method == 'POST':
-        full_city = request.POST.get('full_city')
+        #full_city = request.POST.get('full_city')
         try:
-            map()
-            mapping_result = f"Data mapping completed for {full_city}"
-            return JsonResponse({'success': True, 'message': mapping_result})
+            map() 
+            mapping_result = f"Data mapping completed!"
+            return JsonResponse({'status': True, 'message': mapping_result})
         except :
-            return JsonResponse({'success': False, 'message': 'Something Went Wrong'})
+            return JsonResponse({'status': False, 'message': 'Something Went Wrong In Mapping!'})
 
 def download_media_zip(request):
     # Create a BytesIO buffer to hold the zip file in memory
