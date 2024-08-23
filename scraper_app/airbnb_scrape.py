@@ -18,14 +18,12 @@ logger = logging.getLogger('scraper_app')  # Replace 'myapp' with your app's nam
 
 service = Service(ChromeDriverManager().install())
 options = webdriver.ChromeOptions()
-#options.add_argument("--headless")
+options.add_argument("--headless")
 options.add_argument("--disable-gpu")
 options.add_argument("--no-sandbox")
 options.add_argument("--disable-dev-shm-usage")
 options.add_argument("--lang=en-US")
-#driver = webdriver.Chrome(service=service, options=options)
 
-options.add_argument("--headless")
 driver = webdriver.Chrome(service=service, options=options)
 
 class Scrapper():
@@ -50,6 +48,7 @@ class Scrapper():
         """
         This function takes the url of a particular page and get all the properties listing on that page. And it also get the pagination link of the next page.  
         """
+
         driver.get(url)
 
         WebDriverWait(driver, 15).until(
@@ -70,6 +69,13 @@ class Scrapper():
                 break
             previous_height = new_height
         
+
+
+        # time.sleep(5)
+
+        wait = WebDriverWait(driver, 20)  # Adjust the timeout as needed
+        card_container = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'div[data-testid="card-container"]')))
+
         page_source = driver.page_source
         soup_for_listings = BeautifulSoup(page_source, 'html.parser')
 
@@ -82,14 +88,23 @@ class Scrapper():
         for listing in property_listing:
             listings.append(listing.a['href'])
 
-        time.sleep(5)
+
+
+        time.sleep(3)
+        try:
+            wait = WebDriverWait(driver, 10)  # Adjust the timeout as needed
+            next_button = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'a[aria-label="Next"]')))
+        except:
+            logger.error(f'pagination link not found')
+            pass
+
         # get the next page link from pagination
         try:
             pagination_tag = soup_for_listings.find('a', {'aria-label': 'Next'}).get('href')
             next_page_link = 'https://www.airbnb.com' + pagination_tag
         except:
             next_page_link = None
-            logger.error(f'pagination link not found')
+
         
         return next_page_link, listings
     
@@ -134,6 +149,8 @@ class Scrapper():
             logger.info(f'got property_url: {property_url}')
             
             self.listing_link.append(property_url)
+
+            time.sleep(7)
 
             page_source = driver.page_source
             soup = BeautifulSoup(page_source, 'html.parser')
@@ -227,12 +244,11 @@ class Scrapper():
                 next_page_link = nextPageLink
                 self.get_property_data(listings)
                 
-                logger.info(f'next_page_link found at 230')
-                
                 if not next_page_link:
                     break
         except:
             print("No more pages to scrape!")
+            logger.info(f'no more pages to scrape')
             pass
             
         

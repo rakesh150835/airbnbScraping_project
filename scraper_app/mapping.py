@@ -5,7 +5,7 @@ from geopy.distance import geodesic
 import time
 import pandas as pd
 import ast
-from . image_similarity import generateScore
+from .image_similarity import generateScore
 import csv
 
 
@@ -83,6 +83,8 @@ def map_shortlist_properties():
                     break
             if count >= 2:
                 break
+
+
 
 def map():
     # start shortlisting and then mapping from here
