@@ -35,6 +35,9 @@ def run_spiders(request):
             full_city = city + ' ' + state
         else:
             full_city = state
+        # if not os.path.exists("media"):
+        #     # If not, create the folder
+        #     os.makedirs("media")
         media_dir = os.path.join(settings.MEDIA_ROOT)
         root_dir = os.path.join(settings.BASE_DIR)
         # delete_csv_files(media_dir)  #REMOVE THE COMMENT IN PRODUCTION

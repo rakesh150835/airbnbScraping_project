@@ -8,3 +8,6 @@ test_files/
 .DS_Store
 .vscode/
 test_distance.py
+myenv/
+logs/
+media/

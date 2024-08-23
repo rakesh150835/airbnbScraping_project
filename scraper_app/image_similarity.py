@@ -12,7 +12,19 @@ from io import BytesIO
 
 
 # Define the device
-device = "cuda" if torch.cuda.is_available() else "cpu"
+#device = "cuda" if torch.cuda.is_available() else "cpu"
+if torch.cuda.is_available():
+    device = "cuda"
+
+# Check if Apple's MPS (Metal Performance Shaders) is available (for Apple Silicon)
+elif torch.backends.mps.is_available():
+    device = "mps"
+
+# If none of the above, fall back to CPU
+else:
+    device = "cpu"
+
+print(device)
 
 # Create the model and preprocess function
 model, _, preprocess = open_clip.create_model_and_transforms('ViT-L-14', pretrained="laion2b_s32b_b82k")
@@ -27,12 +39,15 @@ def imageEncoder(url):
         function and includes steps such as resizing, normalization, .unsqueeze(0) adds an extra 
         dimension to the tensor, making it a batch of size 1. The encode_image method outputs a feature vector.
     """
-    print("url: ", url)#added print for tsting remove it in production
-    response = requests.get(url)
-    img = Image.open(BytesIO(response.content)).convert("RGB")
-    img = preprocess(img).unsqueeze(0).to(device)
-    img = model.encode_image(img)
-    return img
+    try:
+        #print("url: ", url)
+        response = requests.get(url, timeout=(5, 30))
+        img = Image.open(BytesIO(response.content)).convert("RGB")
+        img = preprocess(img).unsqueeze(0).to(device)
+        img = model.encode_image(img)
+        return img
+    except:
+        return ''
 
 
 def generateScore(image1, image2):
@@ -41,11 +56,14 @@ def generateScore(image1, image2):
     float(cos_scores[0][0])*100 converts the extracted score to a percentage.
 
     """
-    img1 = imageEncoder(image1)
-    img2 = imageEncoder(image2)
+    try:
+        img1 = imageEncoder(image1)
+        img2 = imageEncoder(image2)
 
-    cos_scores = util.pytorch_cos_sim(img1, img2)
-    score = round(float(cos_scores[0][0])*100, 2)
-    print(score,"--------")
-    
-    return score
+        cos_scores = util.pytorch_cos_sim(img1, img2)
+        score = round(float(cos_scores[0][0])*100, 2)
+        print("--Score:- ", score)
+        
+        return score
+    except:
+        return 0
