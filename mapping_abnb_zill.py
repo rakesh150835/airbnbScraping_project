@@ -1,90 +1,74 @@
 import pandas as pd
 import ast
 from image_similarity import generateScore
-
-file1 = 'airbnb_Flagstaff_Arizona.csv'
-file2 = 'zillow_Flagstaff_Arizona.csv'
-
-abnb_df = pd.read_csv(file1)
-zill_df = pd.read_csv(file2)
-
-abnb_df['images'] = abnb_df['images'].apply(ast.literal_eval)
-zill_df['images'] = zill_df['images'].apply(ast.literal_eval)
+import csv
 
 
-zill_link = []
-anbn_link = []
-address = []
-zill_rent_price = []
-bedrooms = []
-bathroms = []
-square_footage = []
 
-mapped_index = set()
-no_of_img = 0
-
-for index, abnb_row in abnb_df.iterrows():
-    image_links_df1 = abnb_row['images']
+def safe_eval(val):
+    if pd.isna(val):
+        return val  # or return [] if you prefer to have an empty list for NaNs
+    try:
+        return ast.literal_eval(val)
+    except (ValueError, SyntaxError):
+        return val 
     
-    if no_of_img >= 200:
-        break
 
-    for zill_index, zill_row in zill_df.iterrows():
-        if zill_index in mapped_index:
-            continue
+def mapping_func():
+    file1 = 'abnb_with_same_distance.csv'
+    file2 = 'zill_with_same_distance.csv'
+
+    abnb_df = pd.read_csv(file1)
+    zill_df = pd.read_csv(file2)
+
+    #abnb_df['images'] = abnb_df['images'].apply(ast.literal_eval)
+    #zill_df['images'] = zill_df['images'].apply(ast.literal_eval)
+
+    abnb_df['images'] = abnb_df['images'].apply(safe_eval)
+    zill_df['images'] = zill_df['images'].apply(safe_eval)
+
+
+    #mapped_index = set()
+
+    # loop over airbnb data
+    for index, abnb_row in abnb_df.iterrows():
+        image_links_abnb = abnb_row['images']
         
-        image_links_df2 = zill_row['images']
-        
-        count = 0
-        for abnb_image in image_links_df1:
-            for zil_image in image_links_df2:
-                no_of_img += 1
-
-                if no_of_img >= 200:
-                    break
-
-                print("no of images: ", no_of_img)
-                if generateScore(abnb_image, zil_image) >= 70:
-                    count += 1
-                    
-                    if count >= 5:
-                        zill_link.append(zill_row['Listing_link'])
-                        anbn_link.append(abnb_row['listing_link'])
-                        address.append(zill_row.get('Property_address'))
-                        zill_rent_price.append(zill_row.get('Rent_price'))
-                        bedrooms.append(zill_row.get('#bedrooms'))
-                        bathroms.append(zill_row.get('#bathrooms'))
-                        square_footage.append(zill_row.get('Square_footage'))
-
-                        mapped_index.add(zill_index)
-                        
-                        break
+        for zill_index, zill_row in zill_df.iterrows():
+            # if row already mapped we will not traverse it
+            #if zill_index in mapped_index:
+                #continue
             
-            if count >= 5 or no_of_img >= 200:
+            image_links_zill = zill_row['images']
+            
+            count = 0
+            # loop over both airbnb and zillow's images links
+            for abnb_image in image_links_abnb:
+                for zil_image in image_links_zill:
+                
+                    if generateScore(abnb_image, zil_image) >= 85: # similarity score
+                        count += 1
+                        print("----image mapped----")
+                        if count >= 2:
+                            data = [zill_row.get('Listing_link'), abnb_row.get('listing_link'), zill_row.get('Property_address'),
+                                    zill_row.get('Rent_price'), zill_row.get('#bedrooms'), 
+                                    zill_row.get('#bathrooms'), zill_row.get('Square_footage')]
+
+                            # if give images of airbnb and zillow mapped then store that property's data 
+                            with open('mapped_zill_abnb_ScottsDale_data.csv', 'a', newline='') as file:
+                                writer = csv.writer(file)
+                                writer.writerow(data)
+
+                                # store mapped index so that we don't need to traverse again
+                                #mapped_index.add(zill_index)
+
+                            print("---mapped image link---")
+                            print("zillow link: ", zill_row['Listing_link'])
+                            print("airbnb link: ", abnb_row['listing_link'])
+                            
+                        break
+                
+                if count >= 2:
+                    break
+            if count >= 2:
                 break
-        if count >= 5 or no_of_img >= 200:
-            break
-
-
-
-mapped_data = {
-        'Zillow rental link': zill_link, 'Airbnb Listing link':        anbn_link, "Address": address, 'Zillow Rent price' : zill_rent_price, 'bedrooms': bedrooms, 
-        'bathroms' : bathroms, 'Square footage': square_footage, 
-    }
-
-# to add 'NA' value if data not found 
-max_length = 0
-for values in mapped_data.values():
-    max_length = max(max_length, len(values))
-
-for key, values in mapped_data.items():
-    if len(values) < max_length:
-        values.extend(['NA']*(max_length - len(values)))
-
-# create dataframe to save data in csv file
-df = pd.DataFrame(mapped_data)
-df.to_csv('mapped_zill_abnb_data.csv', index=False)
-
-print("airbnb_mapped_liks: ", zill_link)
-print("zill_mapped_image: ", anbn_link)
-
